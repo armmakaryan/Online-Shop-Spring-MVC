@@ -5,13 +5,12 @@ import com.smartCode.springMvc.model.User;
 
 public interface UserService {
 
-    void register(User user) ;
+    void register(String name, String lastname, String email, String password, int age);
 
-    User getUser(Long id);
 
-    void login(String email, String password) throws Exception;
+    void login(String email, String password);
 
-    void changePassword(String email,String newPassword,String repeatPassword);
+    void changePassword(String email, String newPassword, String repeatPassword);
 
-    void deleteAccount(String email);
+    void deleteAccount(String email, String password);
 }

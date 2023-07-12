@@ -3,107 +3,81 @@ package com.smartCode.springMvc.service.user.impl;
 import com.smartCode.springMvc.exceptions.UserNotFoundException;
 import com.smartCode.springMvc.exceptions.ValidationException;
 import com.smartCode.springMvc.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import com.smartCode.springMvc.repository.UserRepository;
 import com.smartCode.springMvc.service.user.UserService;
-import com.smartCode.springMvc.util.constants.Message;
+import am.smartCode.jdbc.util.constants.Message;
 import com.smartCode.springMvc.util.encoder.MD5Encoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service  // name = userServiceImpl
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+import java.util.Objects;
+
+@Service
 public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
-    @Transactional(
-            readOnly = false,
-            propagation = Propagation.REQUIRED)
-    public void register(User user) {
-        try {
-            validationForRegistration(user);
-            user.setPassword(MD5Encoder.encode(user.getPassword()));
-
-            userRepository.save(user);
-
-            throw new RuntimeException();
-
-            //sending email
-        } catch (Exception e) {
-            e.printStackTrace();
+    @Transactional
+    public void register(@NotBlank String name,
+                         @NotBlank String lastname,
+                         @Email @NotBlank String email,
+                         @Size(min = 8) @NotBlank String password,
+                         @Positive int age) {
+        if (userRepository.findByEmail(email) != null) {
+            throw new ValidationException(Message.EMAIL_IS_NOT_AVAILABLE);
         }
+        User user = new User();
+        user.setName(name);
+        user.setLastname(lastname);
+        user.setEmail(email);
+        user.setPassword(MD5Encoder.encode(password));
+        user.setAge(age);
+        userRepository.save(user);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public User getUser(Long id) {
-        String mail = "test@gmail.com";
-        User byEmail = userRepository.findByEmail(mail);
-        return byEmail;
-    }
-
-    @Override
-    public void login(String email, String password) throws Exception {
-        validationForLogin(email, password);
-        User loginedUser = userRepository.findByEmail(email);
-        if (!loginedUser.getPassword().equals(MD5Encoder.encode(password))) {
-            throw new ValidationException(Message.WRONG_EMAIL_OR_PASSWORD);
+    public void login(@Email @NotBlank String email,
+                      @Size(min = 8) @NotBlank String password) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new UserNotFoundException(Message.USER_NOT_FOUND);
+        }
+        if (!Objects.equals(user.getPassword(), MD5Encoder.encode(password))) {
+            throw new ValidationException(Message.INVALID_PASSWORD);
         }
     }
 
     @Override
     @Transactional
-    public void changePassword(String email, String newPassword, String repeatPassword) {
-        if (!newPassword.equals(repeatPassword)) {
-            throw new ValidationException(Message.PASSWORDS_NOT_MATCHES);
+    public void deleteAccount(@Email @NotBlank String email,
+                              @Size(min = 8) @NotBlank String password) {
+        if (!userRepository.findByEmail(email).getPassword().equals(MD5Encoder.encode(password))) {
+            throw new ValidationException(Message.INVALID_PASSWORD);
         }
-        var user = userRepository.findByEmail(email);
-        if (user == null)
-            throw new UserNotFoundException(Message.USER_NOT_FOUNT);
-        passwordValidation(newPassword);
-        user.setPassword(MD5Encoder.encode(newPassword));
-        try {
-            userRepository.save(user);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        userRepository.delete(userRepository.findByEmail(email));
     }
 
     @Override
     @Transactional
-    public void deleteAccount(String email) {
-        try {
-            Long id = userRepository.findByEmail(email).getId();
-            userRepository.findById(id);
-        } catch (Exception e) {
-            throw new UserNotFoundException(Message.USER_NOT_FOUNT);
+    public void changePassword(@Email @NotBlank String email,
+                               @Size(min = 8) @NotBlank String newPassword,
+                               @Size(min = 8) @NotBlank String repeatPassword) {
+        if (!Objects.equals(newPassword, repeatPassword)) {
+            throw new RuntimeException("Passwords does not match");
         }
+        User user = userRepository.findByEmail(email);
+        user.setPassword(newPassword);
+        userRepository.save(user);
     }
-
-    private void validationForRegistration(User user) {
-        if (user.getEmail() == null ||
-                user.getEmail().length() == 0 ||
-                !user.getEmail().matches("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*"
-                        + "@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$"))
-            throw new ValidationException(Message.EMAIL_OR_PASSWORD_IS_NULL);
-        if (user.getPassword() == null ||
-                user.getPassword().length() < 8
-        )
-            throw new ValidationException(Message.PASSWORD_VALIDATION_IS_WRONG);
-    }
-
-    private void passwordValidation(String password) {
-        if (password.length() < 8)
-            throw new ValidationException(Message.PASSWORD_LENGTH_ISSUE);
-    }
-
-    private void validationForLogin(String email, String password) {
-        if (email == null || password == null || email.isEmpty() || password.isEmpty())
-            throw new ValidationException(Message.EMAIL_OR_PASSWORD_IS_NULL);
-    }
-
-
 }
