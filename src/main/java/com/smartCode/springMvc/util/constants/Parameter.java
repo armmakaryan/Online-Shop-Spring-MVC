@@ -10,12 +10,13 @@ public interface Parameter {
     String NEW_PASSWORD_PARAMETER = "newPassword";
     String REPEAT_PASSWORD_PARAMETER = "repeatPassword";
     String AGE_PARAMETER = "age";
+
     String MESSAGE_ATTRIBUTE = "message";
     String REMEMBER_COOKIE = "remember";
     String REMEMBER_ME_PARAMETER = "rememberMe";
     String PRICE_PARAMETER = "price";
     String CATEGORY_PARAMETER = "category";
-    String IS_EXISTS_PARAMETER = "isexists";
+    String IS_EXISTS_PARAMETER = "isExists";
     String ID_PARAMETER = "id";
     String PRODUCTS_ATTRIBUTE = "products";
     String PRODUCT_ATTRIBUTE = "product";

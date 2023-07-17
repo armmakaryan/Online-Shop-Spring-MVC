@@ -1,21 +1,16 @@
-package am.smartCode.jdbc.util.constants;
+package com.smartCode.springMvc.util.constants;
 
 public interface Message {
-    String AUTHENTICATION_SUCCESS = "AUTHENTICATION SUCCESS";
-    String INVALID_EMAIL = "INVALID EMAIL";
-    String BLANK_EMAIL = "EMAIL MUST NOT BE BLANK";
-    String BLANK_PASSWORD = "PASSWORD MUST NOT BE BLANK";
-    String INVALID_PASSWORD = "INVALID PASSWORD";
-    String USER_NOT_FOUND = "USER NOT FOUND";
-    String PRODUCT_NOT_FOUND = "PRODUCT NOT FOUND";
-    String INVALID_LENGTH_OF_PASSWORD = "PASSWORD CAN'T BE LESS THAN 8 SYMBOLS";
-    String REGISTRATION_FAILED = "REGISTRATION FAILED";
-    String INVALID_AGE = "AGE MUST BE MORE THAN 0";
-    String INVALID_BALANCE = "BALANCE CAN'T BE NEGATIVE";
-    String EMAIL_IS_NOT_AVAILABLE = "This username isn't available. Please try another.";
-    String BLANK_PRODUCT_CATEGORY = "CATEGORY MUST NOT BE BLANK";
-    String BLANK_PRODUCT_NAME = "NAME MUST NOT BE BLANK";
-    String INVALID_PRICE = "PRICE MUST BE MORE THAN 0" ;
-    String INVALID_ID = "ID MUST BE MORE THAN 0";
-    String PASSWORD_NOT_MATCHES = "Password not matches";
+    String AUTHENTICATION_SUCCESS = "Authentication success";
+    String EMAIL_OR_PASSWORD_IS_NULL = "Email or Password is null";
+    String WRONG_EMAIL_OR_PASSWORD = "Wrong Email or password";
+    String USER_NOT_FOUNT = "User not found";
+    String PASSWORD_VALIDATION_IS_WRONG = "Password validation is wrong";
+    String PASSWORDS_NOT_MATCHES = "Passwords not matches";
+    String PASSWORD_LENGTH_ISSUE = "Password length must not be less than 8";
+    String REGISTRATION_IS_FAILED = "Registration failed";
+    String PRODUCT_CREATION_FAILED = "Product creation failed";
+    String PRODUCT_NOT_FOUND = "Product not found";
+    String USER_WITH_THIS_EMAIL_IS_ALREADY_EXISTS = "User with this email is already exists";
+
 }

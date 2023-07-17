@@ -1,5 +1,3 @@
-<%@ page import="am.smartCode.jdbc.util.constants.Strings" %>
-<%@ page import="org.springframework.web.servlet.tags.Param" %>
 <%@ page import="com.smartCode.springMvc.util.constants.Parameter" %><%--
   Created by IntelliJ IDEA.
   User: Admin
